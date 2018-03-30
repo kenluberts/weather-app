@@ -1,7 +1,7 @@
 const request = require('request');
 const yargs = require('yargs');
 const apiUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
-const apiKey = 'AIzaSyDyv1T6XOG3iKhplDjIqkvLXLpuWu_DVVQ'
+const apiKey = '';
 
 const argv = yargs
     .options({
