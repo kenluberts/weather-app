@@ -1,7 +1,6 @@
 const request = require('request');
 const yargs = require('yargs');
 const apiUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
-const apiKey = '';
 
 const argv = yargs
     .options({
@@ -10,6 +9,12 @@ const argv = yargs
             alias: 'address',
             describe: 'Address to fetch weather for',
             string: true
+        },
+        k: {
+            demand: true,
+            alias: 'apikey',    
+            describe: 'Google API Key',
+            string: true
         }
     })
     .help()
@@ -17,17 +22,21 @@ const argv = yargs
     .argv;
 
 var encodedAddress = encodeURIComponent(argv.address);
+var apiKey = argv.apikey;
 
 // console.log(argv);
 
 request({
-    // url: 'https://maps.googleapis.com/maps/api/geocode/json?address=225%20Liberty%20Street%20New%20York&key=AIzaSyDyv1T6XOG3iKhplDjIqkvLXLpuWu_DVVQ',
     url: `${apiUrl}?address=${encodedAddress}&key=${apiKey}`,
     json: true
 }, (error, response, body) => {
-    // console.log(JSON.stringify(body, undefined, 2));
-    console.log(error);
-    console.log(`Address: ${body.results[0].formatted_address}`);
-    console.log(`Latitude : ${body.results[0].geometry.location.lat}`);
-    console.log(`Longitude: ${body.results[0].geometry.location.lng}`);
+    if (error) {
+        console.log('Unable to connec to Google servers.');
+    } else if (body.status === 'ZERO RESULTS') {
+        console.log('Unable to find address.');
+    } else if (body.status === 'OK') {        
+        console.log(`Address: ${body.results[0].formatted_address}`);
+        console.log(`Latitude : ${body.results[0].geometry.location.lat}`);
+        console.log(`Longitude: ${body.results[0].geometry.location.lng}`);
+    }
 });
